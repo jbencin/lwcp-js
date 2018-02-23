@@ -9,7 +9,7 @@ var config = {
   devtool: isProd ? "hidden-source-map" : "source-map",
   context: path.resolve("./src"),
   entry: {
-    app: "./index.ts",
+    lwcp: "./lwcp.ts",
     vendor: "./vendor.ts"
   },
   output: {

@@ -1,7 +1,7 @@
 {
   "name": "lwcp",
   "version": "0.0.1",
-  "main": "src/lwcp.ts",
+  "main": "dist/lwcp.bundle.js",
   "scripts": {
     "start": "npm run server:dev",
     "server": "npm run server:dev",
