@@ -9,6 +9,8 @@
       "es2015",
       "dom"
     ],
+    "declaration": true,
+    "declarationDir": "./dist",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true
   },

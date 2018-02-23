@@ -1,6 +1,6 @@
 export namespace LWCP {
 
-	enum Err {
+	export enum Err {
 		NONE            = "No Error",
 		NOMSG           = "No Message",
 		IGNORED         = "Message Ignored",
@@ -31,12 +31,12 @@ export namespace LWCP {
 		MSG_OTHER       = "Unknown Message Error",
 	}
 
-	enum PropType {
+	export enum PropType {
 		PROP    = "PROP",
 		SYSPROP = "SYSPROP",
 	};
 
-	enum Type {
+	export enum Type {
 		INVALID = "INVALID", // Invalid data type
 		NONE    = "NONE",    // Property with no value
 		NUMBER  = "NUMBER",  // Int or Float
@@ -47,7 +47,7 @@ export namespace LWCP {
 		OTHER   = "OTHER",   // Can use when building message for user formatted data
 	}
 
-	enum Encap {
+	export enum Encap {
 		BEGIN  = "%BeginEncap%", // This string signals start of encap data
 		END    = "%EndEncap%",   // This string signals end of encap data
 	}
@@ -57,7 +57,7 @@ export namespace LWCP {
 	const RGX_PROP_NAME  = /^\$?[a-z]\w*$/i; // Same as above with optional '$'
 	const RGX_OBJ_ID     = /^\w+$/;
 
- 	// LWCP Object type. Can't use name 'Object' because that's already defined in Javascript
+	// LWCP Object type. Can't use name 'Object' because that's already defined in Javascript
 	export class Obj {
 		name:  string;
 		id:    string;
@@ -93,7 +93,7 @@ export namespace LWCP {
 		}
 	}
 
- 	// LWCP Value
+	// LWCP Value
 	export class Value {
 		type:  Type;        // LWCP type, not Javascript type
 		val:   any;         // Value
@@ -171,13 +171,13 @@ export namespace LWCP {
 				case Type.NUMBER:
 				case Type.ENUM:
 				case Type.OTHER:
- 					// Nothing special needs to be done, just use toString()
+					// Nothing special needs to be done, just use toString()
 					return this.val.toString();
 				case Type.ENCAP:
- 					// Embed value encap tags
+					// Embed value encap tags
 					return `${Encap.BEGIN}${this.val.toString()}${Encap.END}`
 				case Type.STRING:
- 					// Embed value in double qoutes
+					// Embed value in double qoutes
 					return `"${this.val.toString()}"`
 				case Type.ARRAY:
 					// Return comma separated list embedded in square brackets
@@ -187,7 +187,7 @@ export namespace LWCP {
 		}
 	}
 
- 	// LWCP Property type. Used for properties and system properties
+	// LWCP Property type. Used for properties and system properties
 	export class Prop {
 		name: string;
 		val:  Value;
@@ -202,7 +202,7 @@ export namespace LWCP {
 			if (RGX_PROP_NAME.test(name)) {
 				this.type = (name[0] === '$') ? PropType.SYSPROP : PropType.PROP;
 			} else {
- 				throw `Prop.setName(): Invalid argument '${name}'`;
+				throw `Prop.setName(): Invalid argument '${name}'`;
 			}
 			this.name = name;
 			return this;
