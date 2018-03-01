@@ -1,6 +1,6 @@
 {
   "name": "telos-lwcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/lwcp.bundle.js",
   "types": "typings/lwcp.d.ts",
   "scripts": {
