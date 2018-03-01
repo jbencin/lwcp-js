@@ -10,7 +10,7 @@
       "dom"
     ],
     "declaration": true,
-    "declarationDir": "./dist",
+    "declarationDir": "./typings",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true
   },
