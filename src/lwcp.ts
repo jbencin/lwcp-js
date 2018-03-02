@@ -265,7 +265,7 @@ export namespace LWCP {
 			return this;
 		}
 
-		findProp(name: string) : Value | undefined {
+		getProp(name: string) : Value | undefined {
 			return this.props[name] || this.sysProps[name];
 		}
 

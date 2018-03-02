@@ -52,19 +52,18 @@ describe('LWCP.Message', () => {
 			}
 		});
 
-		describe('Message.addProp()', () => {
+		describe('Message.setProp()', () => {
 			for (let i in test.props) {
 				let prop = test.props[i];
 				if (prop.val) {
 					it(`Test (${prop.desc}): ${prop.name}=${prop.val}`, () => {
-						msg.addProp(prop.name, prop.val);
-						expect(msg.props[i].name).toBe(prop.name);
-						expect(msg.props[i].val).toMatch(prop.val);
+						msg.setProp(prop.name, prop.val);
+						expect(msg.getProp(prop.name).equals(prop.val)).toBe(true);
 					});
 				} else {
 					it(`Test (${prop.desc}): ${prop.name}`, () => {
-						msg.addProp(prop.name);
-						expect(msg.props[i].name).toBe(prop.name);
+						msg.setProp(prop.name);
+						expect(msg.getProp(prop.name)).toBeTruthy();
 					});
 				}
 			}
@@ -75,14 +74,13 @@ describe('LWCP.Message', () => {
 				let sysProp = test.sysProps[i];
 				if (sysProp.val) {
 					it(`Test (${sysProp.desc}): ${sysProp.name}=${sysProp.val}`, () => {
-						msg.addProp(sysProp.name, sysProp.val);
-						expect(msg.sysProps[i].name).toBe(sysProp.name);
-						expect(msg.sysProps[i].val).toMatch(sysProp.val);
+						msg.setProp(sysProp.name, sysProp.val);
+						expect(msg.getProp(sysProp.name).equals(sysProp.val)).toBe(true);
 					});
 				} else {
 					it(`Test (${sysProp.desc}): ${sysProp.name}`, () => {
-						msg.addProp(sysProp.name);
-						expect(msg.sysProps[i].name).toBe(sysProp.name);
+						msg.setProp(sysProp.name);
+						expect(msg.getProp(sysProp.name)).toBeTruthy();
 					});
 				}
 			}
@@ -154,20 +152,20 @@ describe('LWCP.Parser', () => {
 			expect(msg.objs[0].id).toBe('room700');
 			expect(msg.objs[1].name).toBe('line');
 			expect(msg.objs[1].id).toBe('3');
-			expect(msg.props[0].name).toBe('number');
-			expect(msg.props[0].val.equals('555-1234')).toBe(true);
-			expect(msg.props[1].name).toBe('hybrid');
-			expect(msg.props[1].val.equals('false')).toBe(true);
+			expect(msg.getProp('number').equals('555-1234')).toBe(true);
+			expect(msg.getProp('hybrid').equals('false')).toBe(true);
 		})
 	})
 	describe('Parser.getLineFromBuffer()', () => {
 		let parser = new LWCP.Parser;
-		let str = `drop studio.line#1
-				   drop studio.line#2 data=%BeginEncap%  ""'',, %EndEncap%    data2=%BeginEncap%%EndEncap%
-				   drop studio.line#3 data=%BeginEncap%
-%EndEncap%
-				   drop studio.line#4
-				   `;
+		let str = [
+			`drop studio.line#1`,
+			`drop studio.line#2 data=%BeginEncap%  ""'',, %EndEncap%    data2=%BeginEncap%%EndEncap%`,
+			`drop studio.line#3 data=%BeginEncap%`,
+			`%EndEncap%`,
+			`drop studio.line#4`,
+			``
+		].join('\n')
 		it(`Test: ${str}`, () => {
 			parser.addDataToBuffer(str);
 			let line = parser.getLineFromBuffer().trim();
@@ -175,17 +173,18 @@ describe('LWCP.Parser', () => {
 			line = parser.getLineFromBuffer().trim();
 			expect(line).toBe(`drop studio.line#2 data=%BeginEncap%  ""'',, %EndEncap%    data2=%BeginEncap%%EndEncap%`);
 			line = parser.getLineFromBuffer().trim();
-			expect(line).toBe(`drop studio.line#3 data=%BeginEncap%
-%EndEncap%`);
+			expect(line).toBe([`drop studio.line#3 data=%BeginEncap%`,`%EndEncap%`].join('\n'));
 			line = parser.getLineFromBuffer().trim();
 			expect(line).toBe(`drop studio.line#4`);
 		})
 	})
 	describe('Parser.parse()', () => {
 		let parser = new LWCP.Parser;
-		let str = `  call   studio#room700.line#3    number="555-1234" , hybrid = false  $ack
-					 drop   studio.line#6
-					 `;
+		let str = [
+			`  call   studio#room700.line#3    number="555-1234" , hybrid = false  $ack  `,
+			` drop   studio.line#6`,
+			``
+		].join('\n')
 		it(`Test: ${str}`, () => {
 			parser.parse(str);
 			let msg = parser.getMessage();
@@ -195,10 +194,8 @@ describe('LWCP.Parser', () => {
 			expect(msg.objs[0].id).toBe('room700');
 			expect(msg.objs[1].name).toBe('line');
 			expect(msg.objs[1].id).toBe('3');
-			expect(msg.props[0].name).toBe('number');
-			expect(msg.props[0].val.equals('555-1234')).toBe(true);
-			expect(msg.props[1].name).toBe('hybrid');
-			expect(msg.props[1].val.equals('false')).toBe(true);
+			expect(msg.getProp('number').equals('555-1234')).toBe(true);
+			expect(msg.getProp('hybrid').equals('false')).toBe(true);
 			msg = parser.getMessage();
 			expect(msg).toBeTruthy();
 			expect(msg.objs[0].name).toBe('studio');
