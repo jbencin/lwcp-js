@@ -20,7 +20,9 @@ describe('LWCP.Message', () => {
 				{ name:    'line',  id:     '1', desc:    '  numeric id' },
 			],
 			props: [
-				{ name:  'number', val:   '101', desc:    'string value' }
+				{ name:  'number', val:   '101', desc:    'string value' },
+				{ name:     'int', val:       5, desc:    '   int value' },
+				{ name:   'empty', val:    null, desc:    ' empty value' }
 			],
 			sysProps: [
 				{ name:    '$ack', val:  'true', desc:    'string value' }

@@ -47,7 +47,7 @@ export namespace LWCP {
 		END    = "%EndEncap%",   // This string signals end of encap data
 	}
 
-	//
+	// Constants
 	const RGX_LWCP_NAME  = /^[a-z]\w*$/i;
 	const RGX_PROP_NAME  = /^\$?[a-z]\w*$/i; // Same as above with optional '$'
 	const RGX_OBJ_ID     = /^\w+$/;
