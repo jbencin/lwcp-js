@@ -31,11 +31,6 @@ export namespace LWCP {
 		MSG_OTHER       = "Unknown Message Error",
 	}
 
-	export enum PropType {
-		PROP    = "PROP",
-		SYSPROP = "SYSPROP",
-	};
-
 	export enum Type {
 		INVALID = "INVALID", // Invalid data type
 		NONE    = "NONE",    // Property with no value
@@ -74,22 +69,17 @@ export namespace LWCP {
 		}
 
 		setID(id?: string) : Obj {
-			if (!Boolean(id)) {
-				this.id = null;
-			} else if (RGX_OBJ_ID.test(id)) {
+			if (RGX_OBJ_ID.test(id)) {
 				this.id = id;
 			} else {
-				throw `Obj.setID(): Invalid argument '${id}'`;
+				this.id = '';
+				if (Boolean(id)) throw `Obj.setID(): Invalid argument '${id}'`;
 			}
 			return this;
 		}
 
 		toString() : string {
-			let str = this.name;
-			if (Boolean(this.id)) {
-				str += `#${this.id}`;
-			}
-			return str;
+			return [this.name, this.id].filter(e => Boolean(e)).join('#');
 		}
 	}
 
@@ -212,68 +202,35 @@ export namespace LWCP {
 					return `"${this.val.toString()}"`
 				case Type.ARRAY:
 					// Return comma separated list embedded in square brackets
-					let strArr = this.val.map((e: any) => e.toString());
+					let strArr = this.val.map((e: Value) => e.toString());
 					return `[${strArr.join(',')}]`;
 			}
 		}
 	}
 
-	// LWCP Property type. Used for properties and system properties
-	export class Prop {
-		name: string;
-		val:  Value;
-		type: PropType;
-
-		constructor(name: string, ...args: any[]) {
-			this.setName(name);
-			this.setVal(...args);
+	export class PropMap extends Object {
+		// Returns array like this: [['prop1'], ['prop2', 'val2'], ['prop3']]
+		toArray2d() : string[][] {
+			return Object.keys(this).map(key => [key, this[key].toString()].filter(e => Boolean(e)))
 		}
 
-		setName(name: string) : Prop {
-			if (RGX_PROP_NAME.test(name)) {
-				this.type = (name[0] === '$') ? PropType.SYSPROP : PropType.PROP;
-			} else {
-				throw `Prop.setName(): Invalid argument '${name}'`;
-			}
-			this.name = name;
-			return this;
-		}
-
-		setVal(...args: any[]) : Prop {
-			if (args && args.length) {
-				let val = args.shift();
-				if (val instanceof Value) {
-					this.val = val;
-				} else {
-					this.val = new Value(val, ...args);
-				}
-			} else {
-				this.val = new Value();
-			}
-			return this;
-		}
-
-		toString() : string {
-			let str    = this.name;
-			let strVal = this.val.toString();
-			if (Boolean(strVal)) {
-				str += `=${strVal}`;
-			}
-			return str.trim();
+		// Returns array like this: ['prop1', 'prop2=val2', 'prop3']
+		toArray1d() : string[] {
+			return this.toArray2d().map(e => e.join('='))
 		}
 	}
 
 	export class Message {
-		op:       string;      // LWCP operation. Also determines if message is valid
-		objs:     Obj[];       // List of Objects/Selectors
-		props:    Prop[];      // LWCP Properties
-		sysProps: Prop[];      // LWCP System Properties
+		op:       string;  // LWCP operation. Also determines if message is valid
+		objs:     Obj[];   // List of Objects/Selectors
+		props:    PropMap; // LWCP Properties
+		sysProps: PropMap; // LWCP System Properties
 
 		constructor(op: string) {
 			this.setOp(op);
 			this.objs     = [];
-			this.props    = [];
-			this.sysProps = [];
+			this.props    = new PropMap();
+			this.sysProps = new PropMap();
 		}
 
 		// DO NOT SET FIELDS DIRECTLY, USE add/set FUNCTIONS TO DO SO SAFELY!!!
@@ -294,25 +251,30 @@ export namespace LWCP {
 		}
 
 		// Use same interface for adding props and sysprops so user doesn't have to think about it
-		addProp(prop: Prop | string, ...args: any[]) : Message {
+		setProp(name: string, ...args: any[]) : Message {
 			// Can use either existing prop or make new prop from string+args
-			if ( !(prop instanceof Prop) ) {
-				prop = new Prop(prop, ...args);
+			let val = args[0];
+			if ( !(val instanceof Value) ) {
+				val = new Value(...args);
 			}
-			switch (prop.type) {
-				case PropType.PROP:    this.props.push(prop);    break;
-				case PropType.SYSPROP: this.sysProps.push(prop); break;
-				default: throw `Message.addProp(): Invalid type '${prop.type}'`;
+			if (name[0] !== '$') {
+				this.props[name] = val;
+			} else {
+				this.sysProps[name] = val;
 			}
 			return this;
+		}
+
+		findProp(name: string) : Value | undefined {
+			return this.props[name] || this.sysProps[name];
 		}
 
 		toString() : string {
 			// Write all 4 sections out as elements of an array
 			let strArr = [this.op];
-			strArr.push(this.objs.map    (e => e.toString()).join('.'));
-			strArr.push(this.props.map   (e => e.toString()).join(','));
-			strArr.push(this.sysProps.map(e => e.toString()).join(' '));
+			strArr.push(this.objs.map(e => e.toString()).join('.'));
+			strArr.push(this.props.toArray1d().join(','));
+			strArr.push(this.sysProps.toArray1d().join(' '));
 
 			// Remove null strings and join array with spaces
 			return strArr.filter(e => Boolean(e)).join(' ');
@@ -433,15 +395,18 @@ export namespace LWCP {
 				buf = this.stripLeadingRegex(buf, /^[\s,]*/);
 				let match = /^\$?[a-z]\w*/.exec(buf);
 				if (!match) return; // End of list
-				let prop = new Prop(match[0]);
+				let name = match[0];
 				// Remove name from buffer
-				buf = buf.slice(prop.name.length).trim();
+				buf = buf.slice(name.length).trim();
 				// If next non-ws char is '=', property has a value
 				if (buf[0] === '=') {
-					buf = this.parseValue(prop.val, buf.slice(1));
+					let val = new Value();
+					buf = this.parseValue(val, buf.slice(1));
+					msg.setProp(name, val);
+				} else {
+					msg.setProp(name);
 				}
 
-				msg.addProp(prop);
 			}
 		}
 
