@@ -163,6 +163,19 @@ export namespace LWCP {
 			return this;
 		}
 
+		// Compare for equality to Javascript value/object/array
+		equals (v: any) : boolean {
+			if (Array.isArray(this.val)) {
+				if (this.val.length !== v.length) return false;
+				for (let j in this.val) {
+					if (!this.val[j].equals(v[j])) return false;
+				}
+				return true;
+			} else {
+				return this.val === v;
+			}
+		}
+
 		toString() : string {
 			switch (this.type) {
 				case Type.INVALID:
