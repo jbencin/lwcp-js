@@ -176,6 +176,24 @@ export namespace LWCP {
 			}
 		}
 
+		// Convert to regular Javascript object
+		toVal() : any {
+			switch (this.type) {
+				case Type.INVALID:
+				case Type.NONE:
+				case Type.NUMBER:
+				case Type.ENUM:
+				case Type.OTHER:
+				case Type.ENCAP:
+				case Type.STRING:
+					// Nothing special needs to be done
+					return this.val;
+				case Type.ARRAY:
+					// Will recursively call toVal() on elements
+					return this.val.map((e: Value) => e.toVal());
+			}
+		}
+
 		toString() : string {
 			switch (this.type) {
 				case Type.INVALID:
