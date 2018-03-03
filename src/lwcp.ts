@@ -73,13 +73,13 @@ export namespace LWCP {
 				this.id = id;
 			} else {
 				this.id = '';
-				if (Boolean(id)) throw `Obj.setID(): Invalid argument '${id}'`;
+				if (id) throw `Obj.setID(): Invalid argument '${id}'`;
 			}
 			return this;
 		}
 
 		toString() : string {
-			return [this.name, this.id].filter(e => Boolean(e)).join('#');
+			return [this.name, this.id].filter(e => e).join('#');
 		}
 	}
 
@@ -211,7 +211,7 @@ export namespace LWCP {
 	export class PropMap extends Object {
 		// Returns array like this: [['prop1'], ['prop2', 'val2'], ['prop3']]
 		toArray2d() : string[][] {
-			return Object.keys(this).map(key => [key, this[key].toString()].filter(e => Boolean(e)))
+			return Object.keys(this).map(key => [key, this[key].toString()].filter(e => e))
 		}
 
 		// Returns array like this: ['prop1', 'prop2=val2', 'prop3']
@@ -265,8 +265,18 @@ export namespace LWCP {
 			return this;
 		}
 
-		getProp(name: string) : Value | undefined {
+		// Get Property as LWCP value
+		getPropAsValue(name: string) : Value | undefined {
 			return this.props[name] || this.sysProps[name];
+		}
+
+		// Get Property as Javascript object/value
+		getProp(name: string) : any {
+			return this.getPropAsValue(name).toVal();
+		}
+
+		hasProp(name: string) : boolean {
+			return Boolean(this.getPropAsValue(name));
 		}
 
 		toString() : string {
@@ -277,7 +287,7 @@ export namespace LWCP {
 			strArr.push(this.sysProps.toArray1d().join(' '));
 
 			// Remove null strings and join array with spaces
-			return strArr.filter(e => Boolean(e)).join(' ');
+			return strArr.filter(e => e).join(' ');
 		}
 	}
 

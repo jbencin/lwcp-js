@@ -60,12 +60,12 @@ describe('LWCP.Message', () => {
 				if (prop.val) {
 					it(`Test (${prop.desc}): ${prop.name}=${prop.val}`, () => {
 						msg.setProp(prop.name, prop.val);
-						expect(msg.getProp(prop.name).equals(prop.val)).toBe(true);
+						expect(msg.getProp(prop.name)).toBe(prop.val);
 					});
 				} else {
 					it(`Test (${prop.desc}): ${prop.name}`, () => {
 						msg.setProp(prop.name);
-						expect(msg.getProp(prop.name)).toBeTruthy();
+						expect(msg.hasProp(prop.name)).toBe(true);
 					});
 				}
 			}
@@ -77,12 +77,12 @@ describe('LWCP.Message', () => {
 				if (sysProp.val) {
 					it(`Test (${sysProp.desc}): ${sysProp.name}=${sysProp.val}`, () => {
 						msg.setProp(sysProp.name, sysProp.val);
-						expect(msg.getProp(sysProp.name).equals(sysProp.val)).toBe(true);
+						expect(msg.getProp(sysProp.name)).toBe(sysProp.val);
 					});
 				} else {
 					it(`Test (${sysProp.desc}): ${sysProp.name}`, () => {
 						msg.setProp(sysProp.name);
-						expect(msg.getProp(sysProp.name)).toBeTruthy();
+						expect(msg.hasProp(sysProp.name)).toBe(true);
 					});
 				}
 			}
@@ -154,8 +154,8 @@ describe('LWCP.Parser', () => {
 			expect(msg.objs[0].id).toBe('room700');
 			expect(msg.objs[1].name).toBe('line');
 			expect(msg.objs[1].id).toBe('3');
-			expect(msg.getProp('number').equals('555-1234')).toBe(true);
-			expect(msg.getProp('hybrid').equals('false')).toBe(true);
+			expect(msg.getProp('number')).toBe('555-1234');
+			expect(msg.getProp('hybrid')).toBe('false');
 		})
 	})
 	describe('Parser.getLineFromBuffer()', () => {
@@ -196,8 +196,8 @@ describe('LWCP.Parser', () => {
 			expect(msg.objs[0].id).toBe('room700');
 			expect(msg.objs[1].name).toBe('line');
 			expect(msg.objs[1].id).toBe('3');
-			expect(msg.getProp('number').equals('555-1234')).toBe(true);
-			expect(msg.getProp('hybrid').equals('false')).toBe(true);
+			expect(msg.getProp('number')).toBe('555-1234');
+			expect(msg.getProp('hybrid')).toBe('false');
 			msg = parser.getMessage();
 			expect(msg).toBeTruthy();
 			expect(msg.objs[0].name).toBe('studio');
