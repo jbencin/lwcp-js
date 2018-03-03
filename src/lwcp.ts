@@ -317,6 +317,13 @@ export namespace LWCP {
 			return this.messages.shift();
 		}
 
+		// Take all messages
+		getMessages() : Message[] {
+			let arr = this.messages;
+			this.messages = [];
+			return arr;
+		}
+
 		addDataToBuffer(data: string) {
 			this.buffer += data;
 		}
