@@ -69,6 +69,7 @@ export namespace LWCP {
 		}
 
 		setID(id?: string) : Obj {
+			if (id != null) id = id.toString() // Always treat as string (unless null)
 			if (RGX_OBJ_ID.test(id)) {
 				this.id = id;
 			} else {
