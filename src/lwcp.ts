@@ -289,6 +289,11 @@ export namespace LWCP {
 			// Remove null strings and join array with spaces
 			return strArr.filter(e => e).join(' ');
 		}
+
+		// '\n' terminated message
+		toStringTerm() : string {
+			return `${this.toString()}\n`;
+		}
 	}
 
 	export class Parser {
