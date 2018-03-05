@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
+    "outDir": "dist",
+    "declaration": true,
     "sourceMap": true,
+    "noImplicitAny": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": [
-      "es2015",
-      "dom"
-    ],
-    "declaration": true,
-    "declarationDir": "./typings",
-    "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true
   },
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "dist"
