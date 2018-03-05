@@ -1,18 +1,9 @@
-var webpackConf = require('./webpack.config.js');
 module.exports = function (config) {
   config.set({
     basePath:'',
-    frameworks: ['jasmine'],
-    files: [{ pattern: './tests/unit/spec-bundle.js', watched: false }],
-    preprocessors: { './tests/unit/spec-bundle.js': ['coverage', 'webpack', 'sourcemap'] },
-    webpack: {
-      module: webpackConf.module,
-      resolve: webpackConf.resolve
-    },
-    webpackMiddleware: {
-      noInfo: true,
-      stats: 'errors-only'
-    },
+    frameworks: ['jasmine', 'commonjs'],
+    files: ['dist/**/*.js'],
+    preprocessors: { 'dist/**/*.js': ['commonjs', 'coverage', 'sourcemap'] },
     reporters: ['kjhtml', 'spec', 'coverage'],
     // optionally, configure the reporter
     coverageReporter: {
