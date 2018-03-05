@@ -57,7 +57,7 @@ export namespace LWCP {
 		name:  string;
 		id:    string;
 
-		constructor(name: string, id?: string) {
+		constructor(name: string, id?: string | number) {
 			this.setName(name);
 			this.setID(id);
 		}
@@ -68,13 +68,15 @@ export namespace LWCP {
 			return this;
 		}
 
-		setID(id?: string) : Obj {
-			if (id != null) id = id.toString() // Always treat as string (unless null)
-			if (RGX_OBJ_ID.test(id)) {
-				this.id = id;
-			} else {
-				this.id = '';
-				if (id) throw `Obj.setID(): Invalid argument '${id}'`;
+		setID(id?: string | number) : Obj {
+			if (id != null) {
+				id = id.toString();
+				if (RGX_OBJ_ID.test(id)) {
+					this.id = id;
+				} else {
+					this.id = '';
+					throw `Obj.setID(): Invalid argument '${id}'`;
+				}
 			}
 			return this;
 		}
@@ -91,9 +93,7 @@ export namespace LWCP {
 
 		constructor(val: any = null, type?: Type) {
 			this.setVal(val);
-			if (type) {
-				this.setType(type);
-			}
+			this.setType(type);
 		}
 
 		setVal(val: any = null) : Value {
@@ -141,16 +141,18 @@ export namespace LWCP {
 			return this;
 		}
 
-		setType(type: Type) : Value {
+		setType(type?: Type) : Value {
 			// Can only switch between string types
-			switch (this.type) {
+			// If type is null or empty, this is not an error, just ignore, 'type' is optional param in many places
+			if (type) switch (this.type) {
 				case Type.ENCAP:
 				case Type.STRING:
 				case Type.ENUM:
 					this.type = type;
-					return this;
+					break;
+				default:
+					console.error(`Value.setVal(): Cannot set type of ${this.type} to ${type}`);
 			}
-			console.error(`Value.setVal(): Cannot set type of ${this.type} to ${type}`);
 			return this;
 		}
 
@@ -242,22 +244,22 @@ export namespace LWCP {
 			return this;
 		}
 
-		addObj(obj: Obj | string, ...args: any[]) : Message {
+		addObj(obj: Obj | string, id?: string | number) : Message {
 			// Can use either existing obj or make new obj from string+args
 			if ( !(obj instanceof Obj) ) {
-				obj = new Obj(obj, ...args);
+				obj = new Obj(obj, id);
 			}
 			this.objs.push(obj);
 			return this;
 		}
 
 		// Use same interface for adding props and sysprops so user doesn't have to think about it
-		setProp(name: string, ...args: any[]) : Message {
+		setProp(name: string, val?: any, type?: Type) : Message {
 			// Can use either existing prop or make new prop from string+args
-			let val = args[0];
 			if ( !(val instanceof Value) ) {
-				val = new Value(...args);
+				val = new Value(val);
 			}
+			val.setType(type);
 			if (name[0] !== '$') {
 				this.props[name] = val;
 			} else {
