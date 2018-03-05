@@ -5,8 +5,10 @@
   "types": "dist/lwcp.d.ts",
   "scripts": {
     "build": "tsc",
-    "clean": "npm cache clear && rimraf -- dist",
-    "test": "karma start"
+    "test": "karma start",
+    "start": "npm run build && npm test",
+    "prepublishOnly": "npm run build && npm test",
+    "clean": "npm cache clear && rimraf -- dist"
   },
   "license": "ISC",
   "author": "Jeff Bencin",
