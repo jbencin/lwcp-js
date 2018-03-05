@@ -1,6 +1,6 @@
 export namespace LWCP {
 
-	export enum Err {
+	export const enum Err {
 		NONE            = "No Error",
 		NOMSG           = "No Message",
 		IGNORED         = "Message Ignored",
@@ -31,7 +31,7 @@ export namespace LWCP {
 		MSG_OTHER       = "Unknown Message Error",
 	}
 
-	export enum Type {
+	export const enum Type {
 		INVALID = "INVALID", // Invalid data type
 		NONE    = "NONE",    // Property with no value
 		NUMBER  = "NUMBER",  // Int or Float
@@ -42,7 +42,7 @@ export namespace LWCP {
 		OTHER   = "OTHER",   // Can use when building message for user formatted data
 	}
 
-	export enum Encap {
+	export const enum Encap {
 		BEGIN  = "%BeginEncap%", // This string signals start of encap data
 		END    = "%EndEncap%",   // This string signals end of encap data
 	}
