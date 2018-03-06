@@ -211,7 +211,7 @@ export namespace LWCP {
 		}
 	}
 
-	export class PropMap extends Object {
+	export class PropMap {
 		// Returns array like this: [['prop1'], ['prop2', 'val2'], ['prop3']]
 		toArray2d() : string[][] {
 			return Object.keys(this).map(key => [key, this[key].toString()].filter(e => e))

@@ -87,6 +87,8 @@ describe('LWCP.Message', () => {
 				}
 			}
 		})
+
+		it(`Test if Message.toString() crashes: ${msg.toString()}`, () => {})
 	})
 })
 
