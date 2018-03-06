@@ -1,13 +1,13 @@
-import { LWCP } from "./lwcp"
+import { LWCP } from './lwcp'
 
 describe('LWCP Basic Tests', () => {
 	it('Load LWCP test spec file', () => {
-		expect(true).toBe(true);
-	});
+		expect(true).toBe(true)
+	})
 
 	it('Import LWCP module', () => {
-		expect(LWCP).toBeTruthy();
-	});
+		expect(LWCP).toBeTruthy()
+	})
 })
 
 describe('LWCP.Message', () => {
@@ -29,76 +29,76 @@ describe('LWCP.Message', () => {
 			]
 		}
 
-		let msg  = new LWCP.Message(test.cmd);
+		let msg  = new LWCP.Message(test.cmd)
 
 		it(`Create Message '${test.cmd}'`, () => {
-			expect(Boolean(msg)).toBe(true);
-			expect(msg.op).toMatch(test.cmd);
-		});
+			expect(Boolean(msg)).toBe(true)
+			expect(msg.op).toMatch(test.cmd)
+		})
 
 		describe('Message.addObj()', () => {
 			for (let i in test.objs) {
-				let obj = test.objs[i];
+				let obj = test.objs[i]
 				if (obj.id) {
 					it(`Test (${obj.desc}): ${obj.name}#${obj.id}`, () => {
-						msg.addObj(obj.name, obj.id);
-						expect(msg.objs[i].name).toBe(obj.name);
-						expect(msg.objs[i].id).toBe(obj.id);
-					});
+						msg.addObj(obj.name, obj.id)
+						expect(msg.objs[i].name).toBe(obj.name)
+						expect(msg.objs[i].id).toBe(obj.id)
+					})
 				} else {
 					it(`Test (${obj.desc}): ${obj.name}`, () => {
-						msg.addObj(obj.name);
-						expect(msg.objs[i].name).toBe(obj.name);
-					});
+						msg.addObj(obj.name)
+						expect(msg.objs[i].name).toBe(obj.name)
+					})
 				}
 			}
-		});
+		})
 
 		describe('Message.setProp()', () => {
 			for (let i in test.props) {
-				let prop = test.props[i];
+				let prop = test.props[i]
 				if (prop.val) {
 					it(`Test (${prop.desc}): ${prop.name}=${prop.val}`, () => {
-						msg.setProp(prop.name, prop.val);
-						expect(msg.getProp(prop.name)).toBe(prop.val);
-					});
+						msg.setProp(prop.name, prop.val)
+						expect(msg.getProp(prop.name)).toBe(prop.val)
+					})
 				} else {
 					it(`Test (${prop.desc}): ${prop.name}`, () => {
-						msg.setProp(prop.name);
-						expect(msg.hasProp(prop.name)).toBe(true);
-					});
+						msg.setProp(prop.name)
+						expect(msg.hasProp(prop.name)).toBe(true)
+					})
 				}
 			}
-		});
+		})
 
 		describe('Message.addProp(): sysprops', () => {
 			for (let i in test.sysProps) {
-				let sysProp = test.sysProps[i];
+				let sysProp = test.sysProps[i]
 				if (sysProp.val) {
 					it(`Test (${sysProp.desc}): ${sysProp.name}=${sysProp.val}`, () => {
-						msg.setProp(sysProp.name, sysProp.val);
-						expect(msg.getProp(sysProp.name)).toBe(sysProp.val);
-					});
+						msg.setProp(sysProp.name, sysProp.val)
+						expect(msg.getProp(sysProp.name)).toBe(sysProp.val)
+					})
 				} else {
 					it(`Test (${sysProp.desc}): ${sysProp.name}`, () => {
-						msg.setProp(sysProp.name);
-						expect(msg.hasProp(sysProp.name)).toBe(true);
-					});
+						msg.setProp(sysProp.name)
+						expect(msg.hasProp(sysProp.name)).toBe(true)
+					})
 				}
 			}
-		});
-	});
+		})
+	})
 })
 
 describe('LWCP.Parser', () => {
 
 	it(`Create Parser`, () => {
-		let parser = new LWCP.Parser;
-		expect(Boolean(parser)).toBe(true);
+		let parser = new LWCP.Parser
+		expect(Boolean(parser)).toBe(true)
 	})
 
 	describe('Parser.parseValue()', () => {
-		let parser = new LWCP.Parser;
+		let parser = new LWCP.Parser
 		// Text 'in' should parse to value 'val'
 		let test = [
 			{ in:                                '100', val:               100, desc: '            positive integer'},
@@ -131,35 +131,35 @@ describe('LWCP.Parser', () => {
 			{ in:                                 '][', val:              null, desc: '               illegal input'},
 			{ in:                                   '', val:              null, desc: '               illegal input'},
 			{ in:                              '     ', val:              null, desc: '               illegal input'},
-		];
+		]
 
 		for (let i in test) {
-			let e = test[i];
+			let e = test[i]
 			it(`Test (${e.desc}): ${e.in}`, () => {
-				let v = new LWCP.Value();
-				parser.parseValue(v, e.in);
-				expect(v.equals(e.val)).toBe(true);
-			});
+				let v = new LWCP.Value()
+				parser.parseValue(v, e.in)
+				expect(v.equals(e.val)).toBe(true)
+			})
 		}
 	})
 	describe('Parser.parseMessage()', () => {
-		let parser = new LWCP.Parser;
-		let str = '  call   studio#room700.line#3    number="555-1234" , hybrid = false  $ack ';
+		let parser = new LWCP.Parser
+		let str = '  call   studio#room700.line#3    number="555-1234" , hybrid = false  $ack '
 		it(`Test: ${str}`, () => {
-			parser.parseMessage(str);
-			let msg = parser.getMessage();
-			expect(msg).toBeTruthy();
-			expect(msg.op).toBe('call');
-			expect(msg.objs[0].name).toBe('studio');
-			expect(msg.objs[0].id).toBe('room700');
-			expect(msg.objs[1].name).toBe('line');
-			expect(msg.objs[1].id).toBe('3');
-			expect(msg.getProp('number')).toBe('555-1234');
-			expect(msg.getProp('hybrid')).toBe('false');
+			parser.parseMessage(str)
+			let msg = parser.getMessage()
+			expect(msg).toBeTruthy()
+			expect(msg.op).toBe('call')
+			expect(msg.objs[0].name).toBe('studio')
+			expect(msg.objs[0].id).toBe('room700')
+			expect(msg.objs[1].name).toBe('line')
+			expect(msg.objs[1].id).toBe('3')
+			expect(msg.getProp('number')).toBe('555-1234')
+			expect(msg.getProp('hybrid')).toBe('false')
 		})
 	})
 	describe('Parser.getLineFromBuffer()', () => {
-		let parser = new LWCP.Parser;
+		let parser = new LWCP.Parser
 		let str = [
 			`drop studio.line#1`,
 			`drop studio.line#2 data=%BeginEncap%  ""'',, %EndEncap%    data2=%BeginEncap%%EndEncap%`,
@@ -169,40 +169,40 @@ describe('LWCP.Parser', () => {
 			``
 		].join('\n')
 		it(`Test: ${str}`, () => {
-			parser.addDataToBuffer(str);
-			let line = parser.getLineFromBuffer().trim();
-			expect(line).toBe(`drop studio.line#1`);
-			line = parser.getLineFromBuffer().trim();
-			expect(line).toBe(`drop studio.line#2 data=%BeginEncap%  ""'',, %EndEncap%    data2=%BeginEncap%%EndEncap%`);
-			line = parser.getLineFromBuffer().trim();
-			expect(line).toBe([`drop studio.line#3 data=%BeginEncap%`,`%EndEncap%`].join('\n'));
-			line = parser.getLineFromBuffer().trim();
-			expect(line).toBe(`drop studio.line#4`);
+			parser.addDataToBuffer(str)
+			let line = parser.getLineFromBuffer().trim()
+			expect(line).toBe(`drop studio.line#1`)
+			line = parser.getLineFromBuffer().trim()
+			expect(line).toBe(`drop studio.line#2 data=%BeginEncap%  ""'',, %EndEncap%    data2=%BeginEncap%%EndEncap%`)
+			line = parser.getLineFromBuffer().trim()
+			expect(line).toBe([`drop studio.line#3 data=%BeginEncap%`,`%EndEncap%`].join('\n'))
+			line = parser.getLineFromBuffer().trim()
+			expect(line).toBe(`drop studio.line#4`)
 		})
 	})
 	describe('Parser.parse()', () => {
-		let parser = new LWCP.Parser;
+		let parser = new LWCP.Parser
 		let str = [
 			`  call   studio#room700.line#3    number="555-1234" , hybrid = false  $ack  `,
 			` drop   studio.line#6`,
 			``
 		].join('\n')
 		it(`Test: ${str}`, () => {
-			parser.parse(str);
-			let msg = parser.getMessage();
-			expect(msg).toBeTruthy();
-			expect(msg.op).toBe('call');
-			expect(msg.objs[0].name).toBe('studio');
-			expect(msg.objs[0].id).toBe('room700');
-			expect(msg.objs[1].name).toBe('line');
-			expect(msg.objs[1].id).toBe('3');
-			expect(msg.getProp('number')).toBe('555-1234');
-			expect(msg.getProp('hybrid')).toBe('false');
-			msg = parser.getMessage();
-			expect(msg).toBeTruthy();
-			expect(msg.objs[0].name).toBe('studio');
-			expect(msg.objs[1].name).toBe('line');
-			expect(msg.objs[1].id).toBe('6');
+			parser.parse(str)
+			let msg = parser.getMessage()
+			expect(msg).toBeTruthy()
+			expect(msg.op).toBe('call')
+			expect(msg.objs[0].name).toBe('studio')
+			expect(msg.objs[0].id).toBe('room700')
+			expect(msg.objs[1].name).toBe('line')
+			expect(msg.objs[1].id).toBe('3')
+			expect(msg.getProp('number')).toBe('555-1234')
+			expect(msg.getProp('hybrid')).toBe('false')
+			msg = parser.getMessage()
+			expect(msg).toBeTruthy()
+			expect(msg.objs[0].name).toBe('studio')
+			expect(msg.objs[1].name).toBe('line')
+			expect(msg.objs[1].id).toBe('6')
 		})
 	})
 })
