@@ -1,13 +1,14 @@
 {
   "name": "telos-lwcp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "dist/lwcp.js",
   "types": "dist/lwcp.d.ts",
   "scripts": {
+    "prepublishOnly": "npm run build && npm test",
+    "postinstall": "npm run build",
     "build": "tsc",
     "test": "karma start",
     "start": "npm run build && npm test",
-    "prepublishOnly": "npm run build && npm test",
     "clean": "npm cache clear && rimraf -- dist"
   },
   "license": "ISC",
@@ -32,7 +33,9 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.31",
     "rimraf": "^2.6.1",
-    "tslint": "^5.5.0",
+    "tslint": "^5.5.0"
+  },
+  "dependencies": {
     "typescript": "^2.4.1"
   }
 }
