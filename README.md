@@ -29,7 +29,7 @@ let par = new LWCP.Parser()             // Create parser
 while(true) {
   let data = get_data_from_somewhere()  // Read input
   parser.parse(data)                    // Parse data with LWCP message(s)
-  parser.getMessages.forEach((msg: LWCP.Message) => {
+  parser.getMessages().forEach((msg: LWCP.Message) => {
     // Process message
   })
 }
