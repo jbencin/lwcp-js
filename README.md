@@ -25,7 +25,7 @@ Parse data stream:
 ```typescript
 import { LWCP } from 'telos-lwcp'
 
-let par = new LWCP.Parser()             // Create parser      
+let parser = new LWCP.Parser()          // Create parser      
 while(true) {
   let data = get_data_from_somewhere()  // Read input
   parser.parse(data)                    // Parse data with LWCP message(s)
